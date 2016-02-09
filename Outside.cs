@@ -7,7 +7,8 @@ namespace ModelHouse
         private bool hot;
         public bool Hot {  get { return hot; } }
 
-        public Outside(string name, bool hot) : base(name)
+        public Outside(string name, bool hot)
+            : base(name)
         {
             this.hot = hot;
         }

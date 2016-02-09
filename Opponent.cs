@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace ModelHouse
 {
@@ -10,19 +9,17 @@ namespace ModelHouse
     {
         private Random random;
         private Location myLocation;
-
-        public Opponent(Location statringLocation)
+        public Opponent(Location startingLocation)
         {
-            myLocation = statringLocation;
+            myLocation = startingLocation;
             random = new Random();
         }
-
         public void Move()
         {
             if (myLocation is IHasExteriorDoor)
             {
-                IHasExteriorDoor LocationWithDoor = 
-                    myLocation as IHasExteriorDoor;
+                IHasExteriorDoor LocationWithDoor =
+                                    myLocation as IHasExteriorDoor;
                 if (random.Next(2) == 1)
                     myLocation = LocationWithDoor.DoorLocation;
             }
@@ -35,7 +32,6 @@ namespace ModelHouse
                     hidden = true;
             }
         }
-
         public bool Check(Location locationToCheck)
         {
             if (locationToCheck != myLocation)

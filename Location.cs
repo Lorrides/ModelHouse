@@ -22,8 +22,8 @@ namespace ModelHouse
         {
             get
             {
-                string description = "You're standing in the " + name
-                                     + ". You see exits to the following places: ";
+                string description = "You’re standing in the " + name
+                    + ". You see exits to the following places: ";
                 for (int i = 0; i < Exits.Length; i++)
                 {
                     description += " " + Exits[i].Name;

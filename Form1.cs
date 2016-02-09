@@ -12,27 +12,25 @@ namespace ModelHouse
 {
     public partial class Form1 : Form
     {
-        private int Moves;
-        private Location currentLocation;
+        int Moves;
 
-        private RoomWithDoor livingRoom;
-        private Room diningRoom;
-        private RoomWithDoor kitchen;
-        private Room stairs;
-        private RoomWithHidingPlace hallway;
-        private RoomWithHidingPlace bathroom;
-        private RoomWithHidingPlace masterBedroom;
-        private RoomWithHidingPlace secondBedroom;
+        Location currentLocation;
 
-        private OutsideWithDoors frontYard;
-        private OutsideWithDoors backYard;
-        private OutsideWithHidingPlace garden;
-        private OutsideWithHidingPlace driveway;
+        RoomWithDoor livingRoom;
+        RoomWithHidingPlace diningRoom;
+        RoomWithDoor kitchen;
+        Room stairs;
+        RoomWithHidingPlace hallway;
+        RoomWithHidingPlace bathroom;
+        RoomWithHidingPlace masterBedroom;
+        RoomWithHidingPlace secondBedroom;
 
-        private Opponent opponent;
+        OutsideWithDoors frontYard;
+        OutsideWithDoors backYard;
+        OutsideWithHidingPlace garden;
+        OutsideWithHidingPlace driveway;
 
-
-
+        Opponent opponent;
 
         public Form1()
         {
@@ -49,21 +47,17 @@ namespace ModelHouse
             RedrawForm();
         }
 
-
         private void RedrawForm()
         {
-
             exits.Items.Clear();
-            for (int i = 0; i < currentLocation.Exits.Length; i ++)
+            for (int i = 0; i < currentLocation.Exits.Length; i++)
                 exits.Items.Add(currentLocation.Exits[i].Name);
             exits.SelectedIndex = 0;
-
-            description.Text = currentLocation.Description + "\r \n (move #" + Moves + ")";
-
+            description.Text = currentLocation.Description + "\r\n(move #" + Moves + ")";
             if (currentLocation is IHidingPlace)
             {
                 IHidingPlace hidingPlace = currentLocation as IHidingPlace;
-                check.Text = "Check" + hidingPlace.HidingPlaceName;
+                check.Text = "Check " + hidingPlace.HidingPlaceName;
                 check.Visible = true;
             }
             else
@@ -73,9 +67,6 @@ namespace ModelHouse
             else
                 goThroughTheDoor.Visible = false;
         }
-
-
-
 
         private void CreateObjects()
         {
@@ -120,7 +111,22 @@ namespace ModelHouse
             backYard.DoorLocation = kitchen;
         }
 
-
+        private void ResetGame(bool displayMessage)
+        {
+            if (displayMessage)
+            {
+                MessageBox.Show("You found me in " + Moves + " moves!");
+                IHidingPlace foundLocation = currentLocation as IHidingPlace;
+                description.Text = "You found your opponent in " + Moves
+                      + " moves! He was hiding " + foundLocation.HidingPlaceName + ".";
+            }
+            Moves = 0;
+            hide.Visible = true;
+            goHere.Visible = false;
+            check.Visible = false;
+            goThroughTheDoor.Visible = false;
+            exits.Visible = false;
+        }
 
         private void goHere_Click(object sender, EventArgs e)
         {
@@ -133,10 +139,34 @@ namespace ModelHouse
             MoveToANewLocation(hasDoor.DoorLocation);
         }
 
-
         private void check_Click(object sender, EventArgs e)
         {
+            Moves++;
+            if (opponent.Check(currentLocation))
+                ResetGame(true);
+            else
+                RedrawForm();
+        }
 
+        private void hide_Click(object sender, EventArgs e)
+        {
+            hide.Visible = false;
+
+            for (int i = 1; i <= 10; i++)
+            {
+                opponent.Move();
+                description.Text = i + "... ";
+                Application.DoEvents();
+                System.Threading.Thread.Sleep(200);
+            }
+
+            description.Text = "Ready or not, here I come!";
+            Application.DoEvents();
+            System.Threading.Thread.Sleep(500);
+
+            goHere.Visible = true;
+            exits.Visible = true;
+            MoveToANewLocation(livingRoom);
         }
     }
 }
